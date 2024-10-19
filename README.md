@@ -1,20 +1,41 @@
-# ollama-ui
 
-Just a simple HTML UI for Ollama
+# Cysinfo AI
 
-Now available as a chrome extension!
-https://chrome.google.com/webstore/detail/ollama-ui/cmgdpmlhgjhoadnonobjeekmfcehffco
+## Description
+Cysinfo AI is a project utilizing Large Language Models (LLMs) and Generative AI to enhance cybersecurity learning and problem-solving. It enables efficient data analysis and interactive user experiences, helping users explore and understand various cybersecurity topics. Built with a scalable, modular design for seamless performance.
 
-## Usage
+## Prerequisites
+- An operating system that supports the Ollama installation (e.g., Windows, macOS, Linux)
+- Git installed on your system
 
-```
-git clone https://github.com/ollama-ui/ollama-ui
-cd ollama-ui
-make
+## Installation Instructions
 
-open http://localhost:8000 # in browser
-```
+1. **Install Ollama** from the official website.
 
-![screenshot1](/screenshot1.jpg?raw=true)
+2. **Start the Ollama server** by running the following command in the terminal or command prompt:
+   ```bash
+   Start ollama
+   ```
 
-![screenshot2](/screenshot2.jpg?raw=true)
+3. **Clone the repository** into your desired directory:
+   ```bash
+   git clone https://github.com/shreeramdrao/Cysinfo-AI.git
+   ```
+
+4. **Navigate to the project directory**:
+   ```bash
+   cd Cysinfo-AI
+   ```
+
+5. **Install the Llama 3 model**:
+   ```bash
+   ollama pull dolphin-llama3:8b
+   ```
+
+6. **Run the application**:
+   ```bash
+   make
+   ```
+
+## Usage Instructions
+Once the application is running, you can access the Cysinfo AI. 
