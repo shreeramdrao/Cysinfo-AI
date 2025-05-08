@@ -14,16 +14,21 @@ const flag = ref(true)
 const onSubmit = () => {
   if (isAiResponding.value) {
     abort()
-    isAiResponding.value = false
+    // Don't reset isAiResponding here, let the promise handle it
     return
   }
 
   if (isInputValid.value) {
-    addUserMessage(userInput.value.trim()).then(() => {
-      isAiResponding.value = false
-    })
+    const message = userInput.value.trim()
     userInput.value = ''
     isAiResponding.value = true
+    addUserMessage(message)
+      .then(() => {
+        isAiResponding.value = false
+      })
+      .catch(() => {
+        isAiResponding.value = false
+      })
   }
 }
 

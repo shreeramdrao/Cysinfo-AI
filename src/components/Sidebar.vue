@@ -62,24 +62,14 @@ const checkSystemPromptPanel = () => {
           }"
           class="flex w-full flex-col gap-y-1 rounded-md px-3 py-2 text-left transition-colors duration-100 ease-in-out hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-300 dark:hover:bg-gray-700 dark:focus:ring-blue-500"
         >
-          <span class="text-sm font-medium leading-none text-gray-900 dark:text-gray-100">
-            {{ chat.name }}
-          </span>
-          <span class="text-xs leading-none text-gray-700 dark:text-gray-300">
-            {{ chat.model }}
-          </span>
-          <span class="text-xs leading-none text-gray-700 dark:text-gray-300">
-            {{
-              chat.createdAt.toLocaleDateString('no', {
-                day: '2-digit',
-                month: 'short',
-                weekday: 'long',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-              })
-            }}
-          </span>
+          <div class="flex flex-col gap-y-1 overflow-hidden">
+            <span class="text-sm font-medium leading-tight text-gray-900 dark:text-gray-100 truncate">
+              {{ chat.name }}
+            </span>
+            <span class="text-xs leading-none text-gray-500 dark:text-gray-400">
+              {{ chat.createdAt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) }}
+            </span>
+          </div>
         </button>
       </div>
 

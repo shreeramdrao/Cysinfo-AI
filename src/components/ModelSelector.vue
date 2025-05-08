@@ -5,6 +5,8 @@ import { useAI } from '../services/useAI.ts'
 import { ref } from 'vue'
 import { currentModel } from '../services/appConfig'
 
+const isModelSelectorVisible = ref(false)
+
 const { activeChat, switchModel, hasMessages } = useChats()
 const { refreshModels, availableModels } = useAI()
 
@@ -34,7 +36,7 @@ const { disabled } = defineProps<Props>()
 
 <template>
   <div class="flex flex-row text-gray-900 dark:text-gray-100">
-    <div class="inline-flex items-center gap-2">
+    <div v-if="isModelSelectorVisible" class="inline-flex items-center gap-2">
       <select
         :disabled="disabled"
         :value="activeChat?.model ?? currentModel"

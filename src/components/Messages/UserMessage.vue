@@ -12,8 +12,6 @@ const { message } = defineProps<Props>()
 
 <template>
   <div class="flex flex-row px-2 py-4 sm:px-4">
-    <img class="mr-2 flex size-10 rounded-full sm:mr-4" :src="avatarUrl" />
-
     <div class="flex max-w-3xl items-center">
       <code v-if="debugMode" class="whitespace-pre-line text-gray-900 dark:text-gray-100">
         {{ message.content }}

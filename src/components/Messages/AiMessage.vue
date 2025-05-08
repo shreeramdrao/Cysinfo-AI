@@ -21,10 +21,10 @@ const { message } = defineProps<Props>()
     />
 
     <div class="flex max-w-3xl items-center rounded-xl">
-      <code v-if="debugMode" class="whitespace-pre-line">{{ message.content }}</code>
+      <code v-if="debugMode" class="whitespace-pre-line break-words">{{ message.content }}</code>
       <div
         v-else
-        class="prose prose-base max-w-full dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-base prose-p:first:mt-0 prose-a:text-blue-600 prose-code:text-sm prose-code:text-gray-100 prose-pre:p-2 dark:prose-code:text-gray-100"
+        class="prose prose-base max-w-full dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-base prose-p:first:mt-0 prose-a:text-blue-600 prose-code:text-sm prose-code:text-gray-100 prose-pre:p-2 dark:prose-code:text-gray-100 whitespace-normal break-words overflow-hidden"
       >
         <Markdown :source="message.content" />
       </div>

@@ -124,43 +124,78 @@ export const useApi = () => {
     request: ChatRequest,
     onDataReceived: (data: any) => void,
   ): Promise<any[]> => {
-    const res = await fetch(getApiUrl('/chat'), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(request),
-      signal: signal.value,
-    })
+    const timeout = setTimeout(() => abortController.value.abort(), 120000); // 120s timeout
 
-    if (!res.ok) {
-      throw new Error('Network response was not ok')
-    }
+    try {
+      const res = await fetch(getApiUrl('/chat'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+        signal: abortController.value.signal,
+      })
 
-    const reader = res.body?.getReader()
-    let results: ChatResponse[] = []
+      if (!res.ok) {
+        throw new Error(`Network response error: ${res.status} ${res.statusText}`)
+      }
 
-    if (reader) {
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) {
-          break
-        }
+      const reader = res.body?.getReader()
+      let results: ChatResponse[] = []
+      let buffer = ''
 
-        try {
-          const chunk = new TextDecoder().decode(value)
-          const parsedChunk: ChatPartResponse = JSON.parse(chunk)
+      if (reader) {
+        const decoder = new TextDecoder()
+        while (true) {
+          try {
+            const { done, value } = await reader.read()
+            if (done) {
+              // Process any remaining data in the buffer
+              if (buffer.trim()) {
+                try {
+                  const parsedChunk: ChatPartResponse = JSON.parse(buffer)
+                  onDataReceived(parsedChunk)
+                  results.push(parsedChunk)
+                } catch (e) {
+                  console.error('Error processing final chunk:', e)
+                }
+              }
+              break
+            }
 
-          onDataReceived(parsedChunk)
-          results.push(parsedChunk)
-        } catch (e) {
-          // Carry on...
+            buffer += decoder.decode(value, { stream: true })
+            const lines = buffer.split('\n')
+            buffer = lines.pop() || ''
+
+            for (const line of lines) {
+              if (line.trim()) {
+                try {
+                  const parsedChunk: ChatPartResponse = JSON.parse(line)
+                  onDataReceived(parsedChunk)
+                  results.push(parsedChunk)
+                } catch (e) {
+                  console.error('Error processing chunk:', e)
+                  continue
+                }
+              }
+            }
+          } catch (e) {
+            console.error('Error reading stream:', e)
+            break
+          }
         }
       }
-    }
 
-    return results
-  }
+      return results
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out after 120 seconds')
+      }
+      throw error
+    } finally {
+      clearTimeout(timeout)
+    }
+    }
 
   // Create a model
   const createModel = async (

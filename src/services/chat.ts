@@ -201,13 +201,23 @@ export function useChats() {
     const aiMessage = ongoingAiMessages.value.get(chatId)
     if (aiMessage) {
       try {
+        // Clear any pending timeouts
+        if (aiMessage.updateTimeout) {
+          clearTimeout(aiMessage.updateTimeout)
+          delete aiMessage.updateTimeout
+        }
+        // Update the final message content
+        await dbLayer.updateMessage(aiMessage.id!, { content: data.message.content })
         ongoingAiMessages.value.delete(chatId)
+        // Refresh messages to ensure consistent state
+        if (chatId === activeChat.value?.id) {
+          setMessages(await dbLayer.getMessages(chatId))
+        }
       } catch (error) {
         console.error('Failed to finalize AI message:', error)
       }
     } else {
       console.error('no ongoing message to finalize:')
-      debugger
     }
   }
 
@@ -269,17 +279,23 @@ export function useChats() {
     if (aiMessage) {
       aiMessage.content += content
       try {
-        await dbLayer.updateMessage(aiMessage.id!, { content: aiMessage.content })
+        // Batch update messages every 500ms to reduce database operations
+        if (!aiMessage.updateTimeout) {
+          aiMessage.updateTimeout = setTimeout(async () => {
+            await dbLayer.updateMessage(aiMessage.id!, { content: aiMessage.content })
+            delete aiMessage.updateTimeout
 
-        // Only "load the messages" if we are on this chat atm.
-        if (chatId == activeChat.value?.id) {
-          setMessages(await dbLayer.getMessages(chatId))
+            // Only reload messages if we are on this chat
+            if (chatId === activeChat.value?.id) {
+              setMessages(await dbLayer.getMessages(chatId))
+            }
+          }, 500)
         }
       } catch (error) {
         console.error('Failed to append to AI message:', error)
       }
     } else {
-      console.log('No ongoing AI message?')
+      console.warn('No ongoing AI message found for chat:', chatId)
     }
   }
 
