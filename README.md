@@ -95,7 +95,7 @@ Cysinfo-AI/
 ├── models/                  # Directory to store fine-tuned models
 ├── node_modules/            # Extracted node modules
 ├── src/                     # Source code for the project
-├── public/                  # Static files
+├── public/                  # Static files  
 ├── package.json             # Project metadata and scripts
 └── README.md                # Project documentation
 ```
